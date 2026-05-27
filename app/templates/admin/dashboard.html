@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — Edcar Properties{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-weight:700;margin-bottom:4px;">Admin Dashboard</h2>
+    <p style="color:var(--text2);">Edcar Properties Management Panel</p>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:var(--gold);font-family:'Cormorant Garamond',serif;">{{ stats.total_properties }}</div>
+                <small class="text-muted">Live Listings</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:#ef9a9a;font-family:'Cormorant Garamond',serif;">{{ stats.pending_payments }}</div>
+                <small class="text-muted">Pending Payments</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:var(--blue2);font-family:'Cormorant Garamond',serif;">{{ stats.total_agents }}</div>
+                <small class="text-muted">Agents</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:var(--gold);font-family:'Cormorant Garamond',serif;">{{ stats.pending_properties }}</div>
+                <small class="text-muted">Pending Review</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:var(--green2);font-family:'Cormorant Garamond',serif;">{{ stats.total_cars }}</div>
+                <small class="text-muted">Cars</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card stat-card p-3 text-center">
+                <div style="font-size:1.8rem;font-weight:700;color:#ef9a9a;font-family:'Cormorant Garamond',serif;">{{ stats.new_inquiries }}</div>
+                <small class="text-muted">New Inquiries</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.payments') }}" class="btn btn-outline-light w-100"><i class="fas fa-money-bill-wave me-2"></i>Payments</a></div>
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.properties') }}" class="btn btn-outline-light w-100"><i class="fas fa-home me-2"></i>Properties</a></div>
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.add_property') }}" class="btn btn-gold w-100"><i class="fas fa-plus me-2"></i>Add Property</a></div>
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.projects') }}" class="btn btn-outline-light w-100"><i class="fas fa-hard-hat me-2"></i>Projects</a></div>
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.cars') }}" class="btn btn-outline-light w-100"><i class="fas fa-car me-2"></i>Cars</a></div>
+        <div class="col-md-2"><a href="{{ url_for('admin_bp.inquiries') }}" class="btn btn-outline-light w-100"><i class="fas fa-envelope me-2"></i>Inquiries</a></div>
+    </div>
+
+    <!-- Change Password + Recent Inquiries -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header py-3"><h5 class="mb-0"><i class="fas fa-lock me-2"></i>Change Password</h5></div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin_bp.change_password') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" name="current_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" name="new_password" class="form-control" required minlength="6">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" name="confirm_password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Recent Inquiries</h5>
+                    <a href="{{ url_for('admin_bp.inquiries') }}" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead><tr><th>From</th><th>Re</th><th>Date</th><th></th></tr></thead>
+                            <tbody>
+                                {% for inq in recent_inquiries %}
+                                <tr>
+                                    <td><strong>{{ inq.visitor_name }}</strong><br><small style="color:var(--text2);">{{ inq.visitor_phone }}</small></td>
+                                    <td style="font-size:0.85rem;">{{ inq.inquiry_type.title() }} #{{ inq.reference_id }}</td>
+                                    <td><small style="color:var(--text2);">{{ inq.submitted_at.strftime('%d %b %H:%M') }}</small></td>
+                                    <td><a href="{{ url_for('admin_bp.handle_inquiry', inquiry_id=inq.id) }}" class="btn btn-sm btn-success">Done</a></td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="4" class="text-center py-3" style="color:var(--text2);">No new inquiries</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

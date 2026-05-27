@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}Agent Dashboard — Edcar Properties{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-weight:700;margin-bottom:4px;">Agent Dashboard</h2>
+    <p style="color:var(--text2);">Welcome, <strong style="color:var(--text);">{{ current_user.name }}</strong></p>
+
+    <!-- Status -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card p-3">
+                <small class="text-muted">Account Status</small>
+                {% if current_user.is_approved %}
+                <h5 style="color:var(--green2);" class="fw-bold mb-0 mt-1"><i class="fas fa-check-circle me-2"></i>Active</h5>
+                {% else %}
+                <h5 style="color:var(--gold);" class="fw-bold mb-0 mt-1"><i class="fas fa-clock me-2"></i>Pending Activation</h5>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card p-3">
+                <small class="text-muted">Payment Status</small>
+                {% if payment %}
+                <h5 class="fw-bold mb-0 mt-1">
+                    {% if payment.status == 'confirmed' %}<span style="color:var(--green2);"><i class="fas fa-check-circle me-2"></i>Confirmed</span>
+                    {% elif payment.status == 'rejected' %}<span style="color:#ef9a9a;"><i class="fas fa-times-circle me-2"></i>Rejected</span>
+                    {% else %}<span style="color:var(--gold);"><i class="fas fa-clock me-2"></i>Pending</span>{% endif %}
+                </h5>
+                {% else %}
+                <h5 class="fw-bold mb-0 mt-1" style="color:#ef9a9a;"><i class="fas fa-exclamation-circle me-2"></i>Not Uploaded</h5>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card p-3">
+                <small class="text-muted">My Listings</small>
+                <h5 class="fw-bold mb-0 mt-1" style="color:var(--gold);">{{ properties|length }} propert{{ 'ies' if properties|length != 1 else 'y' }}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Step 1: Payment -->
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-header py-3">
+                    <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Step 1: Pay Listing Fee</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="card p-3 mb-4 text-center" style="border:1px solid rgba(200,169,81,0.3);">
+                        <div style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:700;color:var(--gold);">${{ listing_fee }}</div>
+                        <div style="color:var(--text2);font-size:0.82rem;">Per property listing</div>
+                    </div>
+                    <div class="alert alert-info mb-3" style="font-size:0.82rem;">
+                        <strong><i class="fas fa-info-circle me-2"></i>Payment Details:</strong>
+                        <pre class="mb-0 mt-2" style="font-size:0.8rem;white-space:pre-wrap;">{{ payment_details }}</pre>
+                    </div>
+                    {% if not payment or payment.status == 'rejected' %}
+                    <form method="POST" action="{{ url_for('agent.upload_proof') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Upload Payment Proof</label>
+                            <input type="file" name="proof" class="form-control" accept="image/*,.pdf" required>
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100"><i class="fas fa-upload me-2"></i>Upload Proof</button>
+                    </form>
+                    {% elif payment.status == 'pending' %}
+                    <div class="alert alert-warning mb-0"><i class="fas fa-clock me-2"></i>Payment proof submitted. Awaiting admin confirmation.</div>
+                    {% else %}
+                    <div class="alert alert-success mb-0"><i class="fas fa-check-circle me-2"></i>Payment confirmed! You can now submit listings.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Submit Property -->
+        <div class="col-md-7">
+            <div class="card h-100">
+                <div class="card-header py-3">
+                    <h5 class="mb-0"><i class="fas fa-home me-2"></i>Step 2: Submit a Property</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if not current_user.is_approved %}
+                    <div class="alert alert-warning">Your account must be activated by admin before submitting listings.</div>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('agent.submit_property') }}" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Property Title</label>
+                                <input type="text" name="title" class="form-control" placeholder="e.g. 3 Bedroom House in Avondale" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Listing Type</label>
+                                <select name="listing_type" class="form-select" required>
+                                    <option value="">Select type</option>
+                                    <option value="sale">For Sale</option>
+                                    <option value="rent">For Rent</option>
+                                    <option value="lease">For Lease</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Property Type</label>
+                                <select name="property_type" class="form-select" required>
+                                    <option value="">Select type</option>
+                                    <option value="house">House</option>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="land">Land</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="office">Office</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Price</label>
+                                <input type="text" name="price" class="form-control" placeholder="e.g. $85,000 or $500/mo" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" class="form-control" placeholder="e.g. Harare" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Full Location / Address</label>
+                                <input type="text" name="location" class="form-control" placeholder="e.g. 12 Rose Ave, Avondale" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Country</label>
+                                <input type="text" name="country" class="form-control" value="Zimbabwe">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Bedrooms</label>
+                                <input type="number" name="bedrooms" class="form-control" placeholder="e.g. 3" min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Bathrooms</label>
+                                <input type="number" name="bathrooms" class="form-control" placeholder="e.g. 2" min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Size (m²)</label>
+                                <input type="text" name="size_sqm" class="form-control" placeholder="e.g. 250">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Features <span style="color:var(--text2);font-size:0.75rem;">(comma separated)</span></label>
+                                <input type="text" name="features" class="form-control" placeholder="Pool, Garage, Garden, Borehole">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="3" placeholder="Describe the property..." required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Property Photos <span style="color:var(--text2);font-size:0.75rem;">(max 5 images)</span></label>
+                                <input type="file" name="images" class="form-control" accept="image/*" multiple>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-gold w-100 py-2">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Property
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Listings -->
+    {% if properties %}
+    <h4 style="font-family:'Cormorant Garamond',serif;margin-top:3rem;margin-bottom:1.5rem;">My Listings</h4>
+    <div class="row g-4">
+        {% for prop in properties %}
+        <div class="col-md-4">
+            <div class="card">
+                {% if prop.main_image %}
+                <img src="{{ url_for('public.uploaded_file', filename=prop.main_image) }}" style="height:160px;object-fit:cover;border-radius:16px 16px 0 0;">
+                {% else %}
+                <div class="no-image" style="height:120px;border-radius:16px 16px 0 0;"><i class="fas fa-home"></i></div>
+                {% endif %}
+                <div class="card-body p-3">
+                    <h6 style="font-family:'Cormorant Garamond',serif;">{{ prop.title }}</h6>
+                    <div style="color:var(--text2);font-size:0.8rem;margin-bottom:8px;"><i class="fas fa-map-marker-alt me-1" style="color:var(--gold);"></i>{{ prop.location }}</div>
+                    <div class="d-flex justify-content-between">
+                        <span style="color:var(--gold);font-weight:700;">{{ prop.price }}</span>
+                        <span class="badge {% if prop.is_published %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ 'Published' if prop.is_published else 'Under Review' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

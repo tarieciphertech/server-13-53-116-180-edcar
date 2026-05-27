@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Inquiries — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-weight:700;"><i class="fas fa-envelope me-2"></i>Inquiries</h3>
+        <a href="{{ url_for('admin_bp.dashboard') }}" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Dashboard</a>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr><th>From</th><th>Contact</th><th>Type</th><th>Message</th><th>Date</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for inq in inquiries %}
+                        <tr style="{% if not inq.is_handled %}background:rgba(200,169,81,0.03);{% endif %}">
+                            <td><strong>{{ inq.visitor_name }}</strong></td>
+                            <td>
+                                <div style="font-size:0.82rem;">{{ inq.visitor_email }}</div>
+                                <div style="font-size:0.82rem;color:var(--text2);">{{ inq.visitor_phone }}</div>
+                            </td>
+                            <td><span class="badge bg-secondary">{{ inq.inquiry_type.title() }}</span></td>
+                            <td style="max-width:250px;font-size:0.85rem;color:var(--text2);">{{ inq.message[:100] }}...</td>
+                            <td><small style="color:var(--text2);">{{ inq.submitted_at.strftime('%d %b %Y %H:%M') }}</small></td>
+                            <td>
+                                {% if inq.is_handled %}
+                                <span class="badge bg-success">Handled</span>
+                                {% else %}
+                                <span class="badge bg-warning">New</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not inq.is_handled %}
+                                <a href="{{ url_for('admin_bp.handle_inquiry', inquiry_id=inq.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check me-1"></i>Done
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="7" class="text-center py-4" style="color:var(--text2);">No inquiries yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

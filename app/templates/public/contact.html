@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Contact — Edcar Properties{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center mb-5">
+            <div class="section-eyebrow">Get In Touch</div>
+            <h2 class="section-title">Contact Edcar Properties</h2>
+            <p style="color:var(--text2);margin-top:1rem;">We're here to help you find your perfect property or answer any questions.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        <!-- Contact Cards -->
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(200,169,81,0.1);border:1px solid rgba(200,169,81,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <i class="fas fa-phone" style="color:var(--gold);font-size:1.2rem;"></i>
+                </div>
+                <h6 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Phone / WhatsApp</h6>
+                <p style="color:var(--text2);font-size:0.88rem;margin-bottom:4px;">+263 772 555 263</p>
+                <p style="color:var(--text2);font-size:0.88rem;margin-bottom:0;">+263 712 731 810</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(200,169,81,0.1);border:1px solid rgba(200,169,81,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <i class="fas fa-envelope" style="color:var(--gold);font-size:1.2rem;"></i>
+                </div>
+                <h6 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Email</h6>
+                <p style="color:var(--text2);font-size:0.88rem;margin-bottom:0;">admin@edcarproperties.co.zw</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(200,169,81,0.1);border:1px solid rgba(200,169,81,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <i class="fas fa-money-bill-wave" style="color:var(--gold);font-size:1.2rem;"></i>
+                </div>
+                <h6 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Payment</h6>
+                <p style="color:var(--text2);font-size:0.88rem;margin-bottom:4px;">EcoCash: 0772 555 263</p>
+                <p style="color:var(--text2);font-size:0.88rem;margin-bottom:0;">CBZ: 0772 555 263 840</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inquiry Form -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <div class="card-header py-3 mb-3">
+                    <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h5>
+                </div>
+                <form method="POST" action="{{ url_for('public.inquire') }}">
+                    <input type="hidden" name="inquiry_type" value="general">
+                    <input type="hidden" name="reference_id" value="0">
+                    <input type="hidden" name="reference_title" value="General Inquiry">
+                    <div class="mb-3">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" name="visitor_name" class="form-control" placeholder="Full name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="visitor_email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="visitor_phone" class="form-control" placeholder="+263..." required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="form-control" rows="4" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold w-100 py-2">
+                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listing Fees -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card p-4 text-center">
+                <h5 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem;">Property Listing Fees</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div style="background:var(--navy3);border-radius:12px;padding:1.5rem;">
+                            <i class="fas fa-user fa-2x mb-2" style="color:var(--gold);"></i>
+                            <h6 style="font-weight:700;">Private Listing</h6>
+                            <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold);">$20</div>
+                            <p style="color:var(--text2);font-size:0.82rem;margin-bottom:0;">Per property listing</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background:var(--navy3);border-radius:12px;padding:1.5rem;">
+                            <i class="fas fa-shield-alt fa-2x mb-2" style="color:var(--green2);"></i>
+                            <h6 style="font-weight:700;">Edcar Managed</h6>
+                            <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--green2);">FREE</div>
+                            <p style="color:var(--text2);font-size:0.82rem;margin-bottom:0;">Properties managed by Edcar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

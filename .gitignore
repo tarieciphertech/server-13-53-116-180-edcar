@@ -1,0 +1,32 @@
+# Runtime and secrets
+.env
+.env.*
+*.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
+*.crt
+*secret*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments and uploads
+venv/
+.venv/
+env/
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+uploads/
+
+# Logs/editors
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

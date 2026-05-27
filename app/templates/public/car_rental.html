@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Car Rental — Edcar Properties{% endblock %}
+{% block body_class %}car-rental-page{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="section-eyebrow">Fleet</div>
+    <h2 class="section-title mb-2">Car Rental</h2>
+    <p style="color:var(--text2);margin-bottom:3rem;">Premium vehicles available for hire. Contact us to book your preferred car.</p>
+
+    {% if cars %}
+    <div class="row g-4">
+        {% for car in cars %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if car.image_file %}
+                <img src="{{ url_for('public.uploaded_file', filename=car.image_file) }}" style="height:200px;object-fit:cover;border-radius:16px 16px 0 0;">
+                {% else %}
+                <div class="no-image" style="border-radius:16px 16px 0 0;"><i class="fas fa-car fa-2x"></i></div>
+                {% endif %}
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 style="font-family:'Cormorant Garamond',serif;font-weight:700;">{{ car.make }} {{ car.model }}</h5>
+                        <span class="badge {% if car.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ 'Available' if car.is_available else 'Booked' }}
+                        </span>
+                    </div>
+                    <div style="color:var(--text2);font-size:0.82rem;margin-bottom:1rem;">
+                        {{ car.year }} · {{ car.color }}
+                    </div>
+                    <div class="row g-2 mb-3" style="font-size:0.82rem;">
+                        <div class="col-6"><i class="fas fa-users me-1" style="color:var(--gold);"></i>{{ car.seats }} Seats</div>
+                        <div class="col-6"><i class="fas fa-cog me-1" style="color:var(--gold);"></i>{{ car.transmission.title() }}</div>
+                        <div class="col-6"><i class="fas fa-gas-pump me-1" style="color:var(--gold);"></i>{{ car.fuel_type.title() }}</div>
+                    </div>
+                    {% if car.features %}
+                    <div class="mb-3">
+                        {% for f in car.features.split(',')[:3] %}
+                        <span style="background:var(--navy3);border:1px solid var(--border);color:var(--text2);padding:2px 8px;border-radius:100px;font-size:0.72rem;margin:2px;display:inline-block;">{{ f.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--gold);">${{ car.price_per_day }}</span>
+                            <span style="color:var(--text2);font-size:0.78rem;">/day</span>
+                        </div>
+                        {% if car.is_available %}
+                        <a href="{{ url_for('public.contact') }}" class="btn btn-gold btn-sm">Book Now</a>
+                        {% else %}
+                        <button class="btn btn-sm btn-outline-light" disabled>Not Available</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5" style="color:var(--text2);">
+        <i class="fas fa-car fa-3x mb-3 d-block" style="opacity:0.2;"></i>
+        <h5>No vehicles listed yet</h5>
+        <p>Check back soon or contact us for current availability.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

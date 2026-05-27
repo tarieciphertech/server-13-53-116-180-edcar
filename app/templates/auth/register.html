@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Register — Edcar Properties{% endblock %}
+{% block content %}
+<div style="min-height:85vh;display:flex;align-items:center;padding:3rem 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="text-center mb-4">
+                    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;">List Your Property</h2>
+                    <p style="color:var(--text2);">Create an account to list properties on Edcar</p>
+                </div>
+                <div class="card p-4">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="Your full name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" placeholder="+263..." required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="At least 6 characters" required>
+                        </div>
+                        <div class="alert alert-info mb-4" style="font-size:0.85rem;">
+                            <i class="fas fa-info-circle me-2"></i>
+                            A listing fee of <strong>$20</strong> applies for private property listings.
+                            Properties managed by Edcar are listed <strong>FREE</strong>.
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100 py-2">Create Account</button>
+                    </form>
+                    <hr style="border-color:var(--border);" class="my-3">
+                    <p class="text-center mb-0" style="font-size:0.9rem;color:var(--text2);">
+                        Already have an account? <a href="{{ url_for('auth.login') }}" style="color:var(--gold);">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

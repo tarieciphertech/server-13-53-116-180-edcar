@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block title %}{{ prop.title }} — Edcar Properties{% endblock %}
+{% block content %}
+<style>
+.gallery-img { height:420px; object-fit:cover; width:100%; border-radius:16px; cursor:pointer; transition:opacity 0.2s; }
+.gallery-thumb { height:90px; object-fit:cover; border-radius:8px; cursor:pointer; opacity:0.6; transition:all 0.2s; border:2px solid transparent; }
+.gallery-thumb:hover, .gallery-thumb.active { opacity:1; border-color:var(--gold); }
+.feature-tag {
+    display:inline-block;
+    background:var(--navy3);
+    border:1px solid var(--border);
+    color:var(--text2);
+    padding:4px 12px;
+    border-radius:100px;
+    font-size:0.78rem;
+    margin:3px;
+}
+</style>
+<div class="container py-5">
+    <div class="row g-5">
+
+        <!-- Left: Images + Details -->
+        <div class="col-lg-8">
+            <!-- Back -->
+            <a href="{{ url_for('public.properties') }}" style="color:var(--text2);text-decoration:none;font-size:0.88rem;" class="d-inline-flex align-items-center gap-2 mb-4">
+                <i class="fas fa-arrow-left"></i> Back to Properties
+            </a>
+
+            <!-- Main Image -->
+            {% if prop.images %}
+            <img id="mainImg" src="{{ url_for('public.uploaded_file', filename=prop.images[0].filename) }}" class="gallery-img mb-3">
+            {% if prop.images|length > 1 %}
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+                {% for img in prop.images %}
+                <img src="{{ url_for('public.uploaded_file', filename=img.filename) }}"
+                     class="gallery-thumb {% if loop.first %}active{% endif %}"
+                     onclick="document.getElementById('mainImg').src=this.src; document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active');">
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="no-image mb-4" style="height:420px;border-radius:16px;"><i class="fas fa-home fa-3x"></i></div>
+            {% endif %}
+
+            <!-- Title + badges -->
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                <span class="listing-badge badge-{{ prop.listing_type }}">For {{ prop.listing_type.title() }}</span>
+                <span style="background:var(--navy3);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:100px;font-size:0.75rem;">{{ prop.property_type.title() }}</span>
+                {% if prop.is_featured %}<span class="featured-badge" style="position:static;">⭐ Featured</span>{% endif %}
+                {% if prop.is_managed %}<span style="background:rgba(67,160,71,0.15);color:var(--green2);padding:3px 10px;border-radius:100px;font-size:0.75rem;"><i class="fas fa-shield-alt me-1"></i>Edcar Managed</span>{% endif %}
+            </div>
+
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:8px;">{{ prop.title }}</h1>
+            <div style="color:var(--text2);margin-bottom:1.5rem;"><i class="fas fa-map-marker-alt me-2" style="color:var(--gold);"></i>{{ prop.location }}, {{ prop.city }}, {{ prop.country }}</div>
+
+            <!-- Key Stats -->
+            <div class="row g-3 mb-4">
+                {% if prop.bedrooms %}
+                <div class="col-3">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-bed mb-1" style="color:var(--gold);"></i>
+                        <div style="font-weight:700;">{{ prop.bedrooms }}</div>
+                        <div style="color:var(--text2);font-size:0.75rem;">Bedrooms</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if prop.bathrooms %}
+                <div class="col-3">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-bath mb-1" style="color:var(--gold);"></i>
+                        <div style="font-weight:700;">{{ prop.bathrooms }}</div>
+                        <div style="color:var(--text2);font-size:0.75rem;">Bathrooms</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if prop.size_sqm %}
+                <div class="col-3">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-ruler-combined mb-1" style="color:var(--gold);"></i>
+                        <div style="font-weight:700;">{{ prop.size_sqm }}</div>
+                        <div style="color:var(--text2);font-size:0.75rem;">m² Area</div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col-3">
+                    <div class="card p-3 text-center">
+                        <i class="fas fa-globe-africa mb-1" style="color:var(--gold);"></i>
+                        <div style="font-weight:700;font-size:0.85rem;">{{ prop.country }}</div>
+                        <div style="color:var(--text2);font-size:0.75rem;">Country</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <h5 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1rem;">About This Property</h5>
+            <p style="color:var(--text2);line-height:1.8;margin-bottom:2rem;">{{ prop.description }}</p>
+
+            <!-- Features -->
+            {% if prop.features %}
+            <h5 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1rem;">Features & Amenities</h5>
+            <div class="mb-4">
+                {% for feature in prop.features.split(',') %}
+                <span class="feature-tag"><i class="fas fa-check me-1" style="color:var(--green2);"></i>{{ feature.strip() }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Price + Inquiry -->
+        <div class="col-lg-4">
+            <!-- Price Card -->
+            <div class="card p-4 mb-4" style="position:sticky;top:80px;">
+                <div style="font-size:0.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Asking Price</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px;">
+                    {{ prop.price }}
+                </div>
+                {% if prop.listing_type == 'rent' %}
+                <div style="color:var(--text2);font-size:0.82rem;margin-bottom:1.5rem;">per month</div>
+                {% else %}
+                <div style="color:var(--text2);font-size:0.82rem;margin-bottom:1.5rem;">{{ prop.listing_type }}</div>
+                {% endif %}
+
+                <hr>
+
+                <h6 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:1rem;">Send an Inquiry</h6>
+                <form method="POST" action="{{ url_for('public.inquire') }}">
+                    <input type="hidden" name="inquiry_type" value="property">
+                    <input type="hidden" name="reference_id" value="{{ prop.id }}">
+                    <input type="hidden" name="reference_title" value="{{ prop.title }}">
+                    <div class="mb-2">
+                        <input type="text" name="visitor_name" class="form-control form-control-sm" placeholder="Your name" required>
+                    </div>
+                    <div class="mb-2">
+                        <input type="email" name="visitor_email" class="form-control form-control-sm" placeholder="Email address" required>
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" name="visitor_phone" class="form-control form-control-sm" placeholder="Phone number" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="message" class="form-control form-control-sm" rows="3"
+                                  placeholder="I am interested in this property...">I am interested in {{ prop.title }}. Please contact me.</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Send Inquiry
+                    </button>
+                </form>
+
+                <hr>
+                <div style="font-size:0.82rem;color:var(--text2);">
+                    <div class="mb-1"><i class="fas fa-phone me-2" style="color:var(--gold);"></i>+263 772 555 263</div>
+                    <div><i class="fas fa-phone me-2" style="color:var(--gold);"></i>+263 712 731 810</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Properties -->
+    {% if similar %}
+    <hr class="my-5">
+    <div class="section-eyebrow">More Like This</div>
+    <h3 class="section-title mb-4">Similar Properties</h3>
+    <div class="row g-4">
+        {% for s in similar %}
+        <div class="col-md-4">
+            <div class="card property-card" onclick="window.location='{{ url_for('public.property_detail', property_id=s.id) }}'">
+                <div class="property-img-wrapper">
+                    {% if s.main_image %}
+                    <img src="{{ url_for('public.uploaded_file', filename=s.main_image) }}" class="card-img-top">
+                    {% else %}
+                    <div class="no-image"><i class="fas fa-home"></i></div>
+                    {% endif %}
+                    <span class="listing-badge badge-{{ s.listing_type }}">For {{ s.listing_type.title() }}</span>
+                </div>
+                <div class="card-body p-3">
+                    <h6 style="font-family:'Cormorant Garamond',serif;">{{ s.title }}</h6>
+                    <div style="color:var(--text2);font-size:0.82rem;"><i class="fas fa-map-marker-alt me-1" style="color:var(--gold);"></i>{{ s.location }}</div>
+                    <div style="color:var(--gold);font-weight:700;margin-top:8px;">{{ s.price }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

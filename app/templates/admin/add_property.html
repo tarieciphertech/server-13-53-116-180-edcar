@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Add Property — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-weight:700;"><i class="fas fa-plus me-2"></i>Add New Property</h3>
+        <a href="{{ url_for('admin_bp.properties') }}" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Back</a>
+    </div>
+    <div class="card p-4">
+        <form method="POST" action="{{ url_for('admin_bp.add_property') }}" enctype="multipart/form-data">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Property Title *</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Luxury 4 Bedroom House in Borrowdale" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Listing Type *</label>
+                    <select name="listing_type" class="form-select" required>
+                        <option value="sale">For Sale</option>
+                        <option value="rent">For Rent</option>
+                        <option value="lease">For Lease</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Property Type *</label>
+                    <select name="property_type" class="form-select" required>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="land">Land</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="office">Office</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Price *</label>
+                    <input type="text" name="price" class="form-control" placeholder="e.g. $85,000 or $500/mo" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Full Location / Address *</label>
+                    <input type="text" name="location" class="form-control" placeholder="e.g. 12 Rose Ave, Borrowdale" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">City *</label>
+                    <input type="text" name="city" class="form-control" placeholder="e.g. Harare" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Country</label>
+                    <input type="text" name="country" class="form-control" value="Zimbabwe">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Bedrooms</label>
+                    <input type="number" name="bedrooms" class="form-control" min="0" placeholder="e.g. 4">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Bathrooms</label>
+                    <input type="number" name="bathrooms" class="form-control" min="0" placeholder="e.g. 2">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Size (m²)</label>
+                    <input type="text" name="size_sqm" class="form-control" placeholder="e.g. 350">
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex gap-3 mt-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_managed" id="isManaged">
+                            <label class="form-check-label" for="isManaged">Edcar Managed</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_featured" id="isFeatured">
+                            <label class="form-check-label" for="isFeatured">Featured</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Features <span style="color:var(--text2);font-size:0.75rem;">(comma separated)</span></label>
+                    <input type="text" name="features" class="form-control" placeholder="Pool, Garage, Garden, Borehole, Solar, Generator, Security">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description *</label>
+                    <textarea name="description" class="form-control" rows="5" placeholder="Full property description..." required></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Property Photos <span style="color:var(--text2);font-size:0.75rem;">(multiple allowed)</span></label>
+                    <input type="file" name="images" class="form-control" accept="image/*" multiple>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-gold px-5 py-2">
+                        <i class="fas fa-plus me-2"></i>Add & Publish Property
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
